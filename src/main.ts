@@ -1,13 +1,13 @@
 import "./style.css";
 import {
   calculateTotals,
-  formatCurrency,
   statusLabels,
   validateEntry,
   type Entry,
   type EntryStatus,
   type EntryType,
 } from "./domain";
+import { formatarMoeda as formatCurrency } from "./shared/money";
 import { store } from "./store";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 let view: "overview" | "ledger" = "overview";
@@ -24,7 +24,7 @@ function render() {
   const state = store.getState();
   const entries = state.ledgers.flatMap((ledger) => ledger.entries);
   const totals = calculateTotals(entries);
-  app.innerHTML = `<div class="shell"><aside class="sidebar"><div class="brand">${icon("↗")} <span>fluxo<span class="accent">.</span></span></div><p class="eyebrow">Organização financeira</p><nav><button class="nav-link ${view === "overview" ? "active" : ""}" data-action="overview">${icon("◌")} Visão geral</button><p class="eyebrow nav-label">Minhas planilhas</p>${state.ledgers.map((ledger) => `<button class="nav-link ${view === "ledger" && ledger.id === state.activeLedgerId ? "active" : ""}" data-ledger="${ledger.id}"><i class="dot ${ledger.color}"></i>${ledger.name}<span class="nav-count">${ledger.entries.length}</span></button>`).join("")}</nav><button class="new-ledger" data-action="new-ledger">${icon("+")} Nova planilha</button><div class="sidebar-footer"><span class="avatar">FT</span><div><strong>Família Torres</strong><small>Espaço de trabalho</small></div></div></aside><main class="main-content"><header class="topbar"><div><p class="eyebrow">${view === "overview" ? "Panorama" : "Planilha ativa"}</p><h1>${view === "overview" ? "Visão geral" : activeLedger().name}</h1></div><button class="primary" data-action="new-entry">${icon("+")} Novo lançamento</button></header>${view === "overview" ? renderOverview(totals, entries) : renderLedger()}</main></div><div id="modal-root"></div>`;
+  app.innerHTML = `<div class="shell"><aside class="sidebar"><div class="brand">${icon("↗")} <span>fluxo<span class="accent">.</span></span></div><p class="eyebrow">Organização financeira</p><nav><button class="nav-link ${view === "overview" ? "active" : ""}" data-action="overview">${icon("◌")} Visão geral</button><p class="eyebrow nav-label">Minhas planilhas</p>${state.ledgers.map((ledger) => `<button class="nav-link ${view === "ledger" && ledger.id === state.activeLedgerId ? "active" : ""}" data-ledger="${ledger.id}"><i class="dot ${ledger.color}"></i>${ledger.name}<span class="nav-count">${ledger.entries.length}</span></button>`).join("")}</nav><button class="new-ledger" data-action="new-ledger">${icon("+")} Nova planilha</button><div class="sidebar-footer"><span class="avatar">FT</span><div><strong>Família Torres</strong><small>Espaço de trabalho</small></div></div></aside><main class="main-content"><header class="topbar"><div><p class="eyebrow">${view === "overview" ? "Panorama" : "Planilha ativa"}</p><h1>${view === "overview" ? "Visão geral" : activeLedger().name}</h1></div><div class="topbar-actions">${view === "ledger" ? `<button class="danger-outline" data-delete-ledger="${activeLedger().id}">${icon("⌫")} Excluir planilha</button>` : ""}<button class="primary" data-action="new-entry">${icon("+")} Novo lançamento</button></div></header>${view === "overview" ? renderOverview(totals, entries) : renderLedger()}</main></div><div id="modal-root"></div>`;
   bindEvents();
 }
 function renderOverview(
@@ -41,7 +41,7 @@ function stateCount() {
 }
 function renderLedgerCard(ledger: ReturnType<typeof activeLedger>) {
   const totals = calculateTotals(ledger.entries);
-  return `<button class="ledger-card" data-ledger="${ledger.id}"><div class="card-top"><i class="dot ${ledger.color}"></i><span>${ledger.entries.length} lançamentos</span>${icon("↗")}</div><h3>${ledger.name}</h3><p>${ledger.description || "Sem descrição"}</p><strong>${formatCurrency(totals.balance)}</strong><small>saldo atual</small></button>`;
+  return `<article class="ledger-card" data-ledger="${ledger.id}" tabindex="0"><div class="card-top"><i class="dot ${ledger.color}"></i><span>${ledger.entries.length} lançamentos</span><button class="card-delete" title="Excluir ${ledger.name}" data-delete-ledger="${ledger.id}">×</button></div><h3>${ledger.name}</h3><p>${ledger.description || "Sem descrição"}</p><strong>${formatCurrency(totals.balance)}</strong><small>saldo atual</small></article>`;
 }
 function renderRecent(entries: Entry[]) {
   const recent = [...entries]

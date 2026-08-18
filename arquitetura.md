@@ -14,10 +14,10 @@ Este documento descreve **como** o sistema será estruturado tecnicamente, **sem
 
 Ele existe para:
 
-* Definir a arquitetura base do projeto
-* Estabelecer responsabilidades claras entre camadas
-* Guiar decisões técnicas e tecnológicas
-* Servir como referência para auditoria arquitetural contínua
+- Definir a arquitetura base do projeto
+- Estabelecer responsabilidades claras entre camadas
+- Guiar decisões técnicas e tecnológicas
+- Servir como referência para auditoria arquitetural contínua
 
 > Se houver conflito entre este documento e o contrato, **o contrato vence**.
 
@@ -55,20 +55,20 @@ Nenhuma camada pode pular a outra.
 
 Responsável apenas por:
 
-* Captura de intenção do usuário
-* Renderização de estado
-* Disparo de eventos
+- Captura de intenção do usuário
+- Renderização de estado
+- Disparo de eventos
 
 **Proibido:**
 
-* Regra de negócio
-* Cálculo financeiro
-* Decisão de fluxo
+- Regra de negócio
+- Cálculo financeiro
+- Decisão de fluxo
 
 Tecnologias candidatas:
 
-* HTML + CSS (base)
-* Framework reativo (futuro)
+- HTML + CSS (base)
+- Framework reativo (futuro)
 
 ---
 
@@ -76,15 +76,15 @@ Tecnologias candidatas:
 
 Responsável por:
 
-* Manter o estado atual da aplicação
-* Orquestrar chamadas ao domínio
-* Garantir previsibilidade de mutações
+- Manter o estado atual da aplicação
+- Orquestrar chamadas ao domínio
+- Garantir previsibilidade de mutações
 
 Características:
 
-* Estado explícito
-* Mutação apenas via eventos
-* Sem regra de negócio
+- Estado explícito
+- Mutação apenas via eventos
+- Sem regra de negócio
 
 ---
 
@@ -94,16 +94,16 @@ O **coração do sistema**.
 
 Responsável por:
 
-* Regras de negócio
-* Validações
-* Geração de lançamentos
-* Cálculos determinísticos
+- Regras de negócio
+- Validações
+- Geração de lançamentos
+- Cálculos determinísticos
 
 Características obrigatórias:
 
-* Funções puras
-* Sem dependência de UI
-* Sem dependência de Infra
+- Funções puras
+- Sem dependência de UI
+- Sem dependência de Infra
 
 ---
 
@@ -111,14 +111,14 @@ Características obrigatórias:
 
 Responsável por:
 
-* Persistência (local ou remota)
-* Leitura e escrita de arquivos
-* Integração externa
+- Persistência (local ou remota)
+- Leitura e escrita de arquivos
+- Integração externa
 
 Características:
 
-* Adaptadores
-* Nenhuma regra de domínio
+- Adaptadores
+- Nenhuma regra de domínio
 
 ---
 
@@ -130,10 +130,10 @@ Características:
 
 Justificativa:
 
-* Continuidade natural do protótipo em JS
-* Tipagem forte para domínio crítico
-* Melhor auditabilidade
-* Redução de erros silenciosos
+- Continuidade natural do protótipo em JS
+- Tipagem forte para domínio crítico
+- Melhor auditabilidade
+- Redução de erros silenciosos
 
 > JavaScript puro é permitido apenas em protótipos isolados.
 
@@ -143,18 +143,18 @@ Justificativa:
 
 Fase inicial:
 
-* HTML
-* CSS
-* TypeScript puro (sem framework)
+- HTML
+- CSS
+- TypeScript puro (sem framework)
 
 Fase de evolução (quando estabilizar domínio):
 
-* Framework reativo (ex: React ou equivalente)
+- Framework reativo (ex: React ou equivalente)
 
 Critério de adoção:
 
-* O domínio já estar sólido
-* Nenhuma regra migrada para UI
+- O domínio já estar sólido
+- Nenhuma regra migrada para UI
 
 ---
 
@@ -164,8 +164,8 @@ Opcional, não obrigatório na fase atual.
 
 Candidatos:
 
-* Node.js + TypeScript
-* API orientada a eventos
+- Node.js + TypeScript
+- API orientada a eventos
 
 O sistema **não depende** de backend para existir.
 
@@ -175,16 +175,16 @@ O sistema **não depende** de backend para existir.
 
 Inicial:
 
-* LocalStorage / IndexedDB (via adaptador)
+- LocalStorage / IndexedDB (via adaptador)
 
 Evolução:
 
-* Banco relacional ou documental
+- Banco relacional ou documental
 
 Regra fixa:
 
-* Infra apenas persiste lançamentos
-* Nenhum dado derivado é salvo
+- Infra apenas persiste lançamentos
+- Nenhum dado derivado é salvo
 
 ---
 
@@ -193,70 +193,69 @@ Regra fixa:
 financeiro-pro/
 │
 ├── docs/
-│   ├── CONTRATO_DO_SISTEMA.md
-│   ├── arquitetura.md
-│   ├── decisoes-tecnicas.md
-│   └── roadmap.md
+│ ├── CONTRATO_DO_SISTEMA.md
+│ ├── arquitetura.md
+│ ├── decisoes-tecnicas.md
+│ └── roadmap.md
 │
-├── public/
-│   └── index.html                # HTML do protótipo (limpo, sem lógica)
+├── index.html # Entrada do Vite (limpo, sem lógica)
+├── public/ # Assets estáticos
 │
 ├── src/
-│   │
-│   ├── domain/                   # REGRA DE NEGÓCIO (núcleo)
-│   │   ├── entities/
-│   │   │   ├── Tabela.ts
-│   │   │   ├── Lancamento.ts
-│   │   │   └── Categoria.ts
-│   │   │
-│   │   ├── services/
-│   │   │   ├── tabela.service.ts
-│   │   │   ├── lancamento.service.ts
-│   │   │   └── dashboard.service.ts
-│   │   │
-│   │   ├── validators/
-│   │   │   └── lancamento.validator.ts
-│   │   │
-│   │   └── index.ts              # Facade do domínio
-│   │
-│   ├── store/                    # ESTADO GLOBAL
-│   │   ├── store.ts
-│   │   ├── actions.ts
-│   │   ├── reducers.ts
-│   │   └── selectors.ts
-│   │
-│   ├── ui/                       # INTERFACE
-│   │   ├── pages/
-│   │   ├── components/
-│   │   ├── renderers/
-│   │   └── events/
-│   │
-│   ├── infra/                    # IO / ADAPTADORES
-│   │   ├── storage/
-│   │   │   ├── localStorage.adapter.ts
-│   │   │   └── indexedDB.adapter.ts
-│   │   │
-│   │   ├── export/
-│   │   │   └── export.xlsx.ts
-│   │   │
-│   │   └── index.ts
-│   │
-│   ├── shared/                   # UTILITÁRIOS PUROS
-│   │   ├── money.ts
-│   │   ├── dates.ts
-│   │   └── ids.ts
-│   │
-│   └── main.ts                   # Bootstrap da aplicação
+│ │
+│ ├── domain/ # REGRA DE NEGÓCIO (núcleo)
+│ │ ├── entities/
+│ │ │ ├── Tabela.ts
+│ │ │ ├── Lancamento.ts
+│ │ │ └── Categoria.ts
+│ │ │
+│ │ ├── services/
+│ │ │ ├── tabela.service.ts
+│ │ │ ├── lancamento.service.ts
+│ │ │ └── dashboard.service.ts
+│ │ │
+│ │ ├── validators/
+│ │ │ └── lancamento.validator.ts
+│ │ │
+│ │ └── index.ts # Facade do domínio
+│ │
+│ ├── store/ # ESTADO GLOBAL
+│ │ ├── store.ts
+│ │ ├── actions.ts
+│ │ ├── reducers.ts
+│ │ └── selectors.ts
+│ │
+│ ├── ui/ # INTERFACE
+│ │ ├── pages/
+│ │ ├── components/
+│ │ ├── renderers/
+│ │ └── events/
+│ │
+│ ├── infra/ # IO / ADAPTADORES
+│ │ ├── storage/
+│ │ │ ├── localStorage.adapter.ts
+│ │ │ └── indexedDB.adapter.ts
+│ │ │
+│ │ ├── export/
+│ │ │ └── export.xlsx.ts
+│ │ │
+│ │ └── index.ts
+│ │
+│ ├── shared/ # UTILITÁRIOS PUROS
+│ │ ├── money.ts
+│ │ ├── dates.ts
+│ │ └── ids.ts
+│ │
+│ └── main.ts # Bootstrap e composição da UI atual
 │
 ├── tests/
-│   ├── domain/
-│   ├── store/
-│   └── infra/
+│ ├── domain/
+│ ├── store/
+│ └── infra/
 │
 ├── package.json
 ├── tsconfig.json
 └── README.md
-
 
 ---
 
@@ -264,8 +263,8 @@ financeiro-pro/
 
 Todo código deve ser auditável contra:
 
-* CONTRATO_DO_SISTEMA.md
-* Este documento
+- CONTRATO_DO_SISTEMA.md
+- Este documento
 
 Pergunta obrigatória ao revisar qualquer arquivo:
 
@@ -279,9 +278,9 @@ Se a resposta não for óbvia, o código está no lugar errado.
 
 Este documento evolui quando:
 
-* Uma decisão arquitetural se consolida
-* Uma tecnologia é oficialmente adotada
-* Um limite entre camadas é refinado
+- Uma decisão arquitetural se consolida
+- Uma tecnologia é oficialmente adotada
+- Um limite entre camadas é refinado
 
 Refatorar este arquivo **é refatorar a arquitetura**.
 
@@ -291,9 +290,9 @@ Refatorar este arquivo **é refatorar a arquitetura**.
 
 Este sistema prioriza:
 
-* Clareza sobre velocidade
-* Verdade sobre conveniência
-* Estrutura sobre improviso
+- Clareza sobre velocidade
+- Verdade sobre conveniência
+- Estrutura sobre improviso
 
 A arquitetura sustenta o contrato.
 O contrato governa o sistema.

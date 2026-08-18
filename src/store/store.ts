@@ -1,8 +1,9 @@
-/* store.ts — Estado e persistência local do controle financeiro */
-import type { Entry, FinancialState, Ledger } from "./domain";
-const storageKey = "fluxo-financeiro:v1";
+import { createLocalStorageAdapter } from "../infra";
+import type { Entry, EntryStatus, FinancialState, Ledger } from "../domain";
+
+const storage = createLocalStorageAdapter("fluxo-financeiro:v1");
 const now = new Date().toISOString();
-const starterState: FinancialState = {
+const initialState: FinancialState = {
   activeLedgerId: "empresa",
   ledgers: [
     {
@@ -23,23 +24,11 @@ const starterState: FinancialState = {
     },
   ],
 };
-function readState(): FinancialState {
-  const saved = localStorage.getItem(storageKey);
-  if (!saved) return starterState;
-  try {
-    const state = JSON.parse(saved) as FinancialState;
-    return state.ledgers?.length ? state : starterState;
-  } catch {
-    return starterState;
-  }
-}
-let state = readState();
-function persist() {
-  localStorage.setItem(storageKey, JSON.stringify(state));
-}
-function newId() {
-  return crypto.randomUUID();
-}
+
+let state = storage.read()?.ledgers?.length ? storage.read()! : initialState;
+const persist = () => storage.write(state);
+const newId = () => crypto.randomUUID();
+
 export const store = {
   getState: () => state,
   addLedger(name: string, description: string) {
@@ -58,6 +47,17 @@ export const store = {
     };
     persist();
   },
+  deleteLedger(id: string) {
+    if (state.ledgers.length <= 1) {
+      throw new Error("A última planilha não pode ser excluída.");
+    }
+
+    const remaining = state.ledgers.filter((ledger) => ledger.id !== id);
+    const activeLedgerId =
+      state.activeLedgerId === id ? remaining[0].id : state.activeLedgerId;
+    state = { ...state, ledgers: remaining, activeLedgerId };
+    persist();
+  },
   setActiveLedger(id: string) {
     if (state.ledgers.some((ledger) => ledger.id === id)) {
       state = { ...state, activeLedgerId: id };
@@ -65,11 +65,10 @@ export const store = {
     }
   },
   addEntry(entry: Omit<Entry, "id">) {
-    const id = state.activeLedgerId;
     state = {
       ...state,
       ledgers: state.ledgers.map((ledger) =>
-        ledger.id === id
+        ledger.id === state.activeLedgerId
           ? {
               ...ledger,
               entries: [...ledger.entries, { ...entry, id: newId() }],
@@ -79,7 +78,7 @@ export const store = {
     };
     persist();
   },
-  updateEntryStatus(entryId: string, status: Entry["status"]) {
+  updateEntryStatus(entryId: string, status: EntryStatus) {
     state = {
       ...state,
       ledgers: state.ledgers.map((ledger) => ({
