@@ -1,5 +1,13 @@
 export type TipoLancamento = "income" | "expense";
-export type StatusLancamento = "planned" | "confirmed" | "paid" | "canceled";
+export type StatusLancamento =
+  | "planned"
+  | "pending"
+  | "overdue"
+  | "important"
+  | "dueSoon"
+  | "confirmed"
+  | "paid"
+  | "canceled";
 
 export type Lancamento = {
   id: string;
@@ -10,6 +18,8 @@ export type Lancamento = {
   date: string;
   status: StatusLancamento;
   notes: string;
+  adjustmentOf?: string;
+  transferId?: string;
 };
 
 export const isLancamentoEfetivo = (lancamento: Lancamento) =>

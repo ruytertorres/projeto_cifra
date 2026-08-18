@@ -7,6 +7,16 @@ export type Tabela = {
   color: string;
   createdAt: string;
   entries: Lancamento[];
+  closures?: PeriodoFechado[];
+};
+
+export type PeriodoFechado = {
+  id: string;
+  startDate: string;
+  endDate: string;
+  closedAt: string;
+  pdfFileName: string;
+  entryIds: string[];
 };
 
 export type EstadoFinanceiro = {

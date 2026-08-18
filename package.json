@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "tailwindcss": "^4.1.18"
+    "jspdf": "^4.2.1",
+    "tailwindcss": "^4.1.18",
+    "xlsx": "^0.18.5"
   }
 }

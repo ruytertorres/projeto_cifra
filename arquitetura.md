@@ -186,6 +186,23 @@ Regra fixa:
 - Infra apenas persiste lançamentos
 - Nenhum dado derivado é salvo
 
+### 4.5 Fechamento de períodos
+
+Existem dois níveis de fechamento:
+
+- **Planilha:** arquiva um intervalo específico em PDF e transporta apenas o saldo ou débito daquela planilha para o dia seguinte.
+- **Geral:** fecha todas as planilhas no mesmo intervalo, gera um PDF consolidado e transporta um saldo de abertura separado para cada planilha.
+
+Transferências internas são mantidas como movimentação entre planilhas e não podem duplicar o resultado geral.
+
+O fechamento não apaga o histórico técnico: os dados do período permanecem referenciados no registro do fechamento e no PDF arquivado.
+
+### 4.6 Importação de Excel e CSV
+
+O formato oficial está em `FORMATO_IMPORTACAO.md`.
+
+A importação deve aceitar `.xlsx` e `.csv`, validar as colunas obrigatórias e rejeitar linhas inválidas com relatório. A coluna `tipo` define entrada ou saída; `valor` permanece sempre positivo. Transferências usam `transferencia_id` para evitar duplicidade no consolidado.
+
 ---
 
 ## 5. ESTRUTURA DE PASTAS (PROPOSTA)

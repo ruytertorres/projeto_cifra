@@ -60,7 +60,7 @@ echo  Encerrando instancias anteriores deste projeto...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$root = [IO.Path]::GetFullPath('%~dp0'); $processes = Get-CimInstance Win32_Process -Filter 'Name = ''node.exe''' | Where-Object { $_.CommandLine -and $_.CommandLine.Contains($root) -and ($_.CommandLine -match 'vite|npm') }; foreach ($process in $processes) { Stop-Process -Id $process.ProcessId -Force -ErrorAction SilentlyContinue }"
 
 echo  Iniciando Vite na porta %PORTA%...
-start "" /b cmd /c "npm run dev -- --host 127.0.0.1 --port %PORTA% > .fluxo-vite-%PORTA%.log 2>&1"
+start "" /b powershell.exe -NoProfile -WindowStyle Hidden -Command "Set-Location -LiteralPath '%~dp0'; npm run dev -- --host 127.0.0.1 --port %PORTA% *> '.fluxo-vite-%PORTA%.log'"
 
 set "URL=http://127.0.0.1:%PORTA%/"
 set /a TENTATIVAS=0
